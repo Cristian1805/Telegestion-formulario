@@ -1,0 +1,47 @@
+COLUMNAS A MODIFICAR:
+
+MOTIVO_NO_GESTIONABLE
+SUB_MOTIVO_NO_GESTIONABLE
+
+SECUENCIA EN BASE DE DATOS:
+
+as_panel_informativo -> as_panel_mixto -> as_panel_principal [MOTIVO_NO_GESTIONABLE, SUB_MOTIVO_NO_GESTIONABLE]
+
+SELECT * FROM as_panel_mixto
+SELECT * FROM as_panel_prncipal
+SELECT * FROM as_panel_informativo
+
+SELECT * FROM as_panel_informativo --25, 29, 30
+WHERE fk_id_panel_prncipal = 7;
+
+SELECT * FROM as_panel_informativo --36, 37
+WHERE fk_id_panel_prncipal = 14;
+
+--CONSULTA DONDE EN MOTIVO_NO_GESTIONABLE ME TRAE LOS 5 CAMPOS:
+SELECT *
+FROM as_panel_informativo
+WHERE 
+    (fk_id_panel_prncipal = 7 AND id_panel_informativo IN (25, 29, 30)) --MOTIVO NO GESTIONABLE
+    OR 
+    (fk_id_panel_prncipal = 14);
+
+
+SELECT * FROM as_panel_informativo --TIPO NEGATIVA
+WHERE fk_id_panel_prncipal = 8;
+
+
+--MOTIVO ATRASO:
+SELECT * FROM as_panel_informativo
+WHERE fk_id_panel_prncipal = 7
+  AND id_panel_informativo NOT IN (25, 29, 30);
+
+MOTIVO DE ATRASO : {
+    Ajustes
+    Transferencia
+    Ya pagó
+}
+
+SUB_MOTIVO_NO_GESTIONABLE : {
+    Llamadas sin gestion
+    Sin contacto 
+}
