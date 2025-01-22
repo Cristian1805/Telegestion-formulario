@@ -75,6 +75,50 @@ $BODY$
         INNER JOIN as_campanas camp ON camp.id_campana = gestion.fk_id_campana
 	INNER JOIN as_agrupacion_campanas agrup ON agrup.id_agrupacion_campanas = camp.fk_id_agrupacion_campanas
 	LEFT JOIN (
+		
+SELECT  
+    ap.fk_id_gestion AS fk_id_gestion,
+    ap.fk_id_panel_mixto AS fk_id_panel_mixto,
+    pi.titulo AS titulo
+FROM  
+    as_actividades_panel_principal ap
+JOIN 
+    as_panel_mixto pm
+ON 
+    ap.fk_id_panel_mixto = pm.id_panel_mixto
+JOIN 
+    as_panel_informativo pi
+ON 
+    pm.fk_id_panel_informativo = pi.id_panel_informativo
+WHERE 
+    (pi.fk_id_panel_prncipal = 7 AND pi.id_panel_informativo IN (25, 29, 30)) 
+		    OR 
+		    (pi.fk_id_panel_prncipal = 14) 
+		    AND ap.fk_id_gestion IS NOT NULL
+	) motivo_no_ges ON motivo_no_ges.fk_id_gestion = gestion.id_gestion
+    LEFT JOIN(
+		SELECT  
+        ap.fk_id_gestion AS fk_id_gestion,
+        ap.fk_id_panel_mixto AS fk_id_panel_mixto,
+        pm.titulo AS titulo
+    FROM 	
+        as_actividades_panel_principal ap -- Alias para as_actividades_panel_principal
+    JOIN 
+        as_panel_mixto pm ON ap.fk_id_panel_mixto = pm.id_panel_mixto -- Alias para as_panel_mixto
+    WHERE 
+        pm.fk_id_panel_informativo IN (
+            SELECT 
+                pi.id_panel_informativo 
+            FROM 
+                as_panel_informativo pi -- Alias para as_panel_informativo
+            WHERE 
+                (pi.fk_id_panel_prncipal = 7 AND pi.id_panel_informativo IN (25, 29, 30))
+                OR 
+                (pi.fk_id_panel_prncipal = 14)
+        )
+        AND ap.fk_id_gestion IS NOT NULL 
+    ) sub_motivo_no_gestionable ON sub_motivo_no_gestionable.fk_id_gestion = gestion.id_gestion
+	LEFT JOIN (
 		SELECT  
 		    ap.fk_id_gestion AS fk_id_gestion,
 		    ap.fk_id_panel_mixto AS fk_id_panel_mixto,
@@ -90,13 +134,10 @@ $BODY$
 		ON 
 		    pm.fk_id_panel_informativo = pi.id_panel_informativo
 		WHERE 
-		    (pi.fk_id_panel_prncipal = 7 AND pi.id_panel_informativo IN (25, 29, 30)) 
-		    OR 
-		    (pi.fk_id_panel_prncipal = 14) 
-		    AND ap.fk_id_gestion IS NOT NULL
-	) motivo_no_ges ON motivo_no_ges.fk_id_gestion = gestion.id_gestion
-        LEFT JOIN(
-		SELECT  fk_id_gestion fk_id_gestion,
+		    pi.fk_id_panel_prncipal = 8 AND ap.fk_id_gestion IS NOT NULL 
+	) tipo_nega ON tipo_nega.fk_id_gestion = gestion.id_gestion --TIPO NEGATIVA
+	LEFT JOIN (
+		SELECT fk_id_gestion fk_id_gestion,
 			fk_id_panel_mixto fk_id_panel_mixto,
 			as_panel_mixto.titulo titulo
 		FROM 	as_actividades_panel_principal, 
@@ -105,8 +146,27 @@ $BODY$
 		AND as_panel_mixto.fk_id_panel_informativo IN (SELECT 
 			id_panel_informativo 
 			FROM as_panel_informativo 
-			WHERE fk_id_panel_prncipal =7)
-        )sub_motivo_no_gestionable ON sub_motivo_no_gestionable.fk_id_gestion = gestion.id_gestion
+			WHERE fk_id_panel_prncipal = 8) 
+	) subtipo_nega ON subtipo_nega.fk_id_gestion = gestion.id_gestion -- "SUBTIPO NEGATIVA"
+	LEFT JOIN (
+		SELECT  
+		    ap.fk_id_gestion AS fk_id_gestion,
+		    ap.fk_id_panel_mixto AS fk_id_panel_mixto,
+		    pi.titulo AS titulo
+		FROM  
+		    as_actividades_panel_principal ap
+		JOIN 
+		    as_panel_mixto pm
+		ON 
+		    ap.fk_id_panel_mixto = pm.id_panel_mixto
+		JOIN 
+		    as_panel_informativo pi
+		ON 
+		    pm.fk_id_panel_informativo = pi.id_panel_informativo
+		WHERE 
+		    pi.fk_id_panel_prncipal = 7 AND pi.id_panel_informativo NOT IN (25, 29, 30) 
+			AND ap.fk_id_gestion IS NOT NULL
+		) motivo ON motivo.fk_id_gestion = gestion.id_gestion  --"MOTIVO ATRASO"  
 	LEFT JOIN (
 		SELECT fk_id_gestion fk_id_gestion,
 			fk_id_panel_mixto fk_id_panel_mixto,
@@ -114,34 +174,7 @@ $BODY$
 		FROM 	as_actividades_panel_principal, 
 			as_panel_mixto
 		WHERE fk_id_panel_mixto = id_panel_mixto
-		AND as_panel_mixto.fk_id_panel_informativo = 5 -- "TIPO NEGATIVA"
-	) tipo_nega ON tipo_nega.fk_id_gestion = gestion.id_gestion
-	LEFT JOIN (
-		SELECT fk_id_gestion fk_id_gestion,
-			fk_id_panel_mixto fk_id_panel_mixto,
-			as_panel_mixto.titulo titulo
-		FROM 	as_actividades_panel_principal, 
-			as_panel_mixto
-		WHERE fk_id_panel_mixto = id_panel_mixto
-		AND as_panel_mixto.fk_id_panel_informativo = 4 -- "SUBTIPO NEGATIVA"
-	) subtipo_nega ON subtipo_nega.fk_id_gestion = gestion.id_gestion
-	LEFT JOIN (
-		SELECT fk_id_gestion fk_id_gestion,
-			fk_id_panel_mixto fk_id_panel_mixto,
-			as_panel_mixto.titulo titulo
-		FROM 	as_actividades_panel_principal, 
-			as_panel_mixto
-		WHERE fk_id_panel_mixto = id_panel_mixto
-		AND as_panel_mixto.fk_id_panel_informativo = 1 -- "MOTIVO DE ATRASO"
-	) motivo ON motivo.fk_id_gestion = gestion.id_gestion   
-	LEFT JOIN (
-		SELECT fk_id_gestion fk_id_gestion,
-			fk_id_panel_mixto fk_id_panel_mixto,
-			as_panel_mixto.titulo titulo
-		FROM 	as_actividades_panel_principal, 
-			as_panel_mixto
-		WHERE fk_id_panel_mixto = id_panel_mixto
-		AND as_panel_mixto.fk_id_panel_informativo = 2 -- "SUBMOTIVO DE ATRASO"
+		AND as_panel_mixto.fk_id_panel_informativo IN (7, 8, 9, 10, 11, 12, 13, 14, 15, 16) -- "SUBMOTIVO DE ATRASO"
 	) submotivo ON submotivo.fk_id_gestion = gestion.id_gestion
 	WHERE 
         gestion.fk_id_campana = idcampana
