@@ -1,0 +1,513 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : Pantalla Datos Basicos
+    Description: Pantalla encargada de administrar la información de los datos
+                 basicos de una campaña
+    Created on :
+    Author     : Jonathan Duque Ramos
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <style>
+
+        .estiloBundles{
+            color: rgb(0, 0, 0) !important;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 16px; 
+        }
+
+        .estiloInputGrande {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 50px; 
+        }
+
+    </style>
+    
+    <div id="perfcss" class="perfilacionDeudorStyle">
+        <h:panelGroup class="ui-g" layout="block" id="pnDatosBasicosValida" style="height: 245px;overflow-y: auto">
+            <h:panelGroup class="ui-g-12 ui-md-4" layout="block" rendered="#{hojaRutaBean.renderUsoInformacion ==1?true:false}">
+                <p:panel header="#{bundleGestion.Label_Informacion_Personal}">
+                    <div class="ui-g-6 ui-md-6">
+                        <h:outputText value="#{bundleGestion.Label_Edad}:"/>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <p:selectOneMenu value="#{hojaRutaBean.perfilacionDeudor.edad}"  filterMatchMode="contains" filter="true" style="width: 100%">
+                            <f:selectItem itemValue="" itemLabel="#{bundleGestion.Label_Seleccionar}..."/>
+                            <f:selectItems value="#{hojaRutaBean.listaEdades}" var="edad" itemLabel="#{edad}" itemValue="#{edad}"/>
+                            <p:ajax listener="#{actualizacionDatoBean.actualizarPerfil(1)}" update="pnDatosBasicosValida"/>
+                        </p:selectOneMenu>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <h:outputText value="#{bundleGestion.Label_Estado_Civil}:"/>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <p:selectOneMenu value="#{hojaRutaBean.perfilacionDeudor.asEstadosCiviles.idEstadoCivil}" style="width: 100%">
+                            <f:selectItem itemValue="" itemLabel="#{bundleGestion.Label_Seleccionar}..." />
+                            <f:selectItems value="#{hojaRutaBean.listaEstadosCivil}" var="estadosCiviles" itemValue="#{estadosCiviles.idEstadoCivil}" itemLabel="#{estadosCiviles.descEstciv}"/>
+                            <p:ajax listener="#{actualizacionDatoBean.actualizarPerfil(2)}"/>
+                        </p:selectOneMenu>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <h:outputText value="#{bundleGestion.Label_Sexo}:"/>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <p:selectOneMenu id="idSexoValida" value="#{hojaRutaBean.perfilacionDeudor.asSexo.idSexo}" style="width: 100%">
+                            <f:selectItem itemValue="" itemLabel="#{bundleGestion.Label_Seleccionar}..." />
+                            <f:selectItems value="#{hojaRutaBean.listaSexos}" var="sexo" itemValue="#{sexo.idSexo}" itemLabel="#{sexo.descripcion}"/>
+                            <p:ajax listener="#{actualizacionDatoBean.actualizarPerfil(3)}"/>
+                        </p:selectOneMenu>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <h:outputText value="#{bundleGestion.Label_Personas_Cargo}:"/>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <p:selectOneMenu value="#{hojaRutaBean.perfilacionDeudor.personasACargo}" filterMatchMode="contains" filter="true" style="width: 100%">
+                            <f:selectItem itemValue="" itemLabel="#{bundleGestion.Label_Seleccionar}..." />
+                            <f:selectItems value="#{hojaRutaBean.listaPersonas}" var="persona" itemValue="#{persona}" itemLabel="#{persona}"/>
+                            <p:ajax listener="#{actualizacionDatoBean.actualizarPerfil(4)}"/>
+                        </p:selectOneMenu>
+                    </div>
+                </p:panel>
+            </h:panelGroup> 
+            <h:panelGroup class="ui-g-12 ui-md-4" layout="block" rendered="#{true}">
+                <p:panel header="#{bundleGestion.Label_Educacion}">
+                    <div class="ui-g-6 ui-md-6">
+                        <h:outputText value="#{bundleGestion.Label_Nivel_Estudio}:"/>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <p:selectOneMenu value="#{hojaRutaBean.perfilacionDeudor.asProfesiones.idProfesion}"  filterMatchMode="contains" filter="true" style="width: 100%">
+                            <f:selectItem itemValue="" itemLabel="#{bundleGestion.Label_Seleccionar}..." />
+                            <f:selectItems value="#{hojaRutaBean.listaNiveles}" var="niveles" itemValue="#{niveles.idProfesion}" itemLabel="#{niveles.nombre}"/>
+                            <p:ajax listener="#{actualizacionDatoBean.actualizarPerfil(5)}"/>
+                        </p:selectOneMenu>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <h:outputText value="#{bundleGestion.Label_Idiomas}:" styleClass="estiloBundles"/> 
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <p:selectCheckboxMenu id="idValidaIdiomas" value="#{hojaRutaBean.listaIdiomasGet}" 
+                                            label="#{bundleGestion.Label_Seleccione}" filter="true"  filterMatchMode="contains" onHide="executeOnOnhide()" style="text-align: left;">                                                            
+                            <f:selectItems  value="#{hojaRutaBean.listaIdiomas}" var="idioma" itemLabel="#{idioma.nombre}" itemValue="#{idioma.idIdioma}"/>
+                        </p:selectCheckboxMenu>
+                        <p:remoteCommand  name="executeOnOnhide" action="#{actualizacionDatoBean.actualizarIdiomas(hojaRutaBean.perfilacionDeudor)}"/>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <h:outputText value="#{bundleGestion.Label_Titulo_Habilidad}:" styleClass="estiloBundles"/>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <p:inputText id="idValidaTitulo" value="#{hojaRutaBean.perfilacionDeudor.titulo}" styleClass="inputHabilidadcss">
+                            <p:ajax listener="#{actualizacionDatoBean.actualizarPerfil(6)}"/>
+                        </p:inputText>
+                    </div>
+                </p:panel>
+            </h:panelGroup>
+            <h:panelGroup class="ui-g-12 ui-md-4" layout="block" rendered="#{hojaRutaBean.renderUsoVivienda ==1?true:false}">
+                <p:panel header="#{bundleGestion.Label_Vivienda}">
+                    <div class="ui-g-6 ui-md-6">
+                        <h:outputText value="#{bundleGestion.Label_Tipo_Vivienda}:"/>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <p:selectOneMenu value="#{hojaRutaBean.perfilacionDeudor.asTipoVivienda.idTipoVivienda}" filterMatchMode="contains" filter="true" style="width: 100%">
+                            <f:selectItem itemValue="" itemLabel="#{bundleGestion.Label_Seleccionar}..." />
+                            <f:selectItems value="#{hojaRutaBean.listaTipoVivienda}" var="tipo" itemLabel="#{tipo.nombre}" itemValue="#{tipo.idTipoVivienda}"/>
+                            <p:ajax listener="#{actualizacionDatoBean.actualizarPerfil(7)}"/>
+                        </p:selectOneMenu>
+                    </div>
+
+                    <!-- Clase vivienda -->
+                    <div class="ui-g-6 ui-md-6">
+                        <h:outputText value="#{bundleGestion.Label_Clase_Vivienda}:"/>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <p:selectOneMenu value="#{hojaRutaBean.perfilacionDeudor.asClaseVivienda.idClaseVivienda}" filterMatchMode="contains" filter="true" style="width: 100%">
+                            <f:selectItem itemValue="" itemLabel="#{bundleGestion.Label_Seleccionar}..." />
+                            <f:selectItems value="#{hojaRutaBean.listaClaseVivienda}" var="clase" itemValue="#{clase.idClaseVivienda}" itemLabel="#{clase.nombre}"/>
+                            <p:ajax listener="#{actualizacionDatoBean.actualizarPerfil(8)}"/>
+                        </p:selectOneMenu>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <h:outputText value="#{bundleGestion.Label_Estrato}:"/>
+                    </div>
+
+                    <div class="ui-g-6 ui-md-6">
+                        <p:selectOneMenu value="#{hojaRutaBean.perfilacionDeudor.estrato}" style="width: 100%">
+                            <f:selectItem itemValue="" itemLabel="#{bundleGestion.Label_Seleccionar}..." />
+                            <f:selectItems value="#{hojaRutaBean.listaEstratos}" var="estrato" itemValue="#{estrato}" itemLabel="#{estrato}"/>
+                            <p:ajax listener="#{actualizacionDatoBean.actualizarPerfil(9)}"/>
+                        </p:selectOneMenu>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <h:outputText value="#{bundleGestion.Label_Matricula}:"/>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <p:inputText value="#{hojaRutaBean.perfilacionDeudor.matricula}">
+                            <p:ajax listener="#{actualizacionDatoBean.actualizarPerfil(23)}"/>
+                        </p:inputText>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <h:outputText value="#{bundleGestion.Label_Direccion_Predio}:"/>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <p:inputText value="#{hojaRutaBean.perfilacionDeudor.direccionPredio}">
+                            <p:ajax listener="#{actualizacionDatoBean.actualizarPerfil(24)}"/>
+                        </p:inputText>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <h:outputText value="#{bundleGestion.Label_Ciudad}:"/>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <p:inputText value="#{hojaRutaBean.perfilacionDeudor.ciudad}">
+                            <p:ajax listener="#{actualizacionDatoBean.actualizarPerfil(25)}"/>
+                        </p:inputText>
+                    </div>
+                </p:panel>
+            </h:panelGroup>
+
+            <h:panelGroup class="ui-g-12 ui-md-4" layout="block" rendered="#{hojaRutaBean.renderUsoOcupacion ==1?true:false}">
+                <p:panel header="#{bundleGestion.Label_Ocupacion}">
+                    <div class="ui-g-6 ui-md-6">
+                        <h:outputText value="#{bundleGestion.Label_Cargo_Funcion}"/>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <p:selectOneMenu filterMatchMode="contains" filter="true" value="#{hojaRutaBean.perfilacionDeudor.asOcupaciones.idOcupacion}" style="width: 100%">
+                            <f:selectItem itemValue="" itemLabel="#{bundleGestion.Label_Seleccionar}..." />
+                            <f:selectItems value="#{hojaRutaBean.listaOcupaciones}" var="ocupacion" itemLabel="#{ocupacion.descOcu}" itemValue="#{ocupacion.idOcupacion}"/>
+                            <p:ajax listener="#{actualizacionDatoBean.actualizarPerfil(10)}"/>
+                        </p:selectOneMenu>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <h:outputText value="#{bundleGestion.Label_Sector}"/>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <p:selectOneMenu filterMatchMode="contains" filter="true" value="#{hojaRutaBean.perfilacionDeudor.asSector.idSector}" style="width: 100%">
+                            <f:selectItem itemValue="" itemLabel="#{bundleGestion.Label_Seleccionar}..." />
+                            <f:selectItems value="#{hojaRutaBean.listaSector}" var="sector" itemLabel="#{sector.nombre}" itemValue="#{sector.idSector}"/>
+                            <p:ajax listener="#{actualizacionDatoBean.actualizarPerfil(12)}"/>
+                        </p:selectOneMenu>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <h:outputText value="#{bundleGestion.Label_Nombre_Empresa}:"/>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <p:inputText value="#{hojaRutaBean.perfilacionDeudor.nombreEmpresa}">
+                            <p:ajax listener="#{actualizacionDatoBean.actualizarPerfil(11)}"/>
+                        </p:inputText>
+                    </div>
+
+                    <!-- Salario ocupacion -->
+                    <div class="ui-g-6 ui-md-6">
+                        <h:outputText value="#{bundleGestion.Label_Salario_Ocupacion}:"/>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <p:inputNumber value="#{hojaRutaBean.perfilacionDeudor.salario}">
+                            <p:ajax listener="#{actualizacionDatoBean.actualizarPerfil(26)}"/>
+                        </p:inputNumber>
+                    </div>
+
+                    <!-- Empresa -->
+                    <div class="ui-g-6 ui-md-6">
+                        <h:outputText value="#{bundleGestion.Label_Empresa}:"/>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <p:inputText value="#{hojaRutaBean.perfilacionDeudor.empresaOcupacion}">
+                            <p:ajax listener="#{actualizacionDatoBean.actualizarPerfil(27)}"/>
+                        </p:inputText>
+                    </div>
+
+                    <!-- Tipo labor -->
+                    <div class="ui-g-6 ui-md-6">
+                        <h:outputText value="#{bundleGestion.Label_Tipo_Labor}:"/>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <p:inputText value="#{hojaRutaBean.perfilacionDeudor.tipoLabor}">
+                            <p:ajax listener="#{actualizacionDatoBean.actualizarPerfil(28)}"/>
+                        </p:inputText>
+                    </div>
+
+                    <!-- Tipo de actividad -->
+                    <div class="ui-g-6 ui-md-6">
+                        <h:outputText value="#{bundleGestion.Label_Tipo_Actividad}:"/>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <p:selectOneMenu filterMatchMode="contains" filter="true" value="#{hojaRutaBean.perfilacionDeudor.asTipoActividad.idTipoActividad}" style="width: 100%">
+                            <f:selectItem itemValue="" itemLabel="#{bundleGestion.Label_Seleccionar}..." />
+                            <f:selectItems value="#{hojaRutaBean.listaTipoActividad}" var="tipoactividad" itemLabel="#{tipoactividad.nombre}" itemValue="#{tipoactividad.idTipoActividad}"/>
+                            <p:ajax listener="#{actualizacionDatoBean.actualizarPerfil(29)}"/>
+                        </p:selectOneMenu>
+                    </div>
+
+                    <!-- Camara y comercio -->
+                    <div class="ui-g-6 ui-md-6">
+                        <h:outputText value="#{bundleGestion.Label_Camara_Comercio}:"/>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <p:selectOneMenu filterMatchMode="contains" filter="true" value="#{hojaRutaBean.perfilacionDeudor.asCamaraComercio.idCamaraComercio}" style="width: 100%">
+                            <f:selectItem itemValue="" itemLabel="#{bundleGestion.Label_Seleccionar}..." />
+                            <f:selectItems value="#{hojaRutaBean.listaCamaraComercio}" var="camaracomercio" itemLabel="#{camaracomercio.nombre}" itemValue="#{camaracomercio.idCamaraComercio}"/>
+                            <p:ajax listener="#{actualizacionDatoBean.actualizarPerfil(30)}"/>
+                        </p:selectOneMenu>
+                    </div>
+
+                    <!-- Matricula Ocupacion -->
+                    <div class="ui-g-6 ui-md-6">
+                        <h:outputText value="#{bundleGestion.Label_Matricula_Ocupacion}:"/>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <p:inputText value="#{hojaRutaBean.perfilacionDeudor.matriculaOcupacion}">
+                            <p:ajax listener="#{actualizacionDatoBean.actualizarPerfil(31)}"/>
+                        </p:inputText>
+                    </div>
+
+                    <!-- Renovada -->
+                    <div class="ui-g-6 ui-md-6">
+                        <h:outputText value="#{bundleGestion.Label_Renovada}:"/>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <p:inputText value="#{hojaRutaBean.perfilacionDeudor.renovada}">
+                            <p:ajax listener="#{actualizacionDatoBean.actualizarPerfil(32)}"/>
+                        </p:inputText>
+                    </div>
+
+                </p:panel>
+            </h:panelGroup>
+            <h:panelGroup class="ui-g-12 ui-md-4" layout="block" rendered="#{true}">
+                <p:panel header="#{bundleGestion.Label_Ingresos}" id="pnIngresos">
+                    <div class="ui-g-6 ui-md-6">
+                        <h:outputText value="#{bundleGestion.Label_Sueldo}:"/>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <p:inputNumber value="#{hojaRutaBean.perfilacionDeudor.sueldo}" symbol="$" decimalPlaces="0" >
+                            <p:ajax listener="#{actualizacionDatoBean.actualizarSaldos(13)}" update="pnIngresos,pnEgresos"/>
+                        </p:inputNumber>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <h:outputText value="#{bundleGestion.Label_Comisiones}:"/>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <p:inputNumber value="#{hojaRutaBean.perfilacionDeudor.comisiones}" symbol="$" decimalPlaces="0" >
+                            <p:ajax listener="#{actualizacionDatoBean.actualizarSaldos(14)}" update="pnIngresos,pnEgresos"/>
+                        </p:inputNumber>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <h:outputText value="#{bundleGestion.Label_Honorarios}:"/>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <p:inputNumber value="#{hojaRutaBean.perfilacionDeudor.honorarios}" symbol="$" decimalPlaces="0">
+                            <p:ajax listener="#{actualizacionDatoBean.actualizarSaldos(15)}" update="pnIngresos,pnEgresos"/>
+                        </p:inputNumber>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <h:outputText value="#{bundleGestion.Label_Arrendamientos}:"/>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <p:inputNumber value="#{hojaRutaBean.perfilacionDeudor.arrendamientos}" symbol="$" decimalPlaces="0">
+                            <p:ajax listener="#{actualizacionDatoBean.actualizarSaldos(16)}" update="pnIngresos,pnEgresos"/>
+                        </p:inputNumber>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <h:outputText value="#{bundleGestion.Label_Otros_Ingresos}:"/>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <p:inputNumber value="#{hojaRutaBean.perfilacionDeudor.otrosIngresos}" symbol="$" decimalPlaces="0">
+                            <p:ajax listener="#{actualizacionDatoBean.actualizarSaldos(17)}" update="pnIngresos,pnEgresos"/>
+                        </p:inputNumber>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <h:outputText value="#{bundleGestion.Label_Total_Ingresos}:"/>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <p:inputNumber id="idTotalValida" value="#{hojaRutaBean.perfilacionDeudor.totalIngresos}" symbol="$" decimalPlaces="0" disabled="true"/>
+                    </div>
+                </p:panel>
+            </h:panelGroup>
+            <h:panelGroup class="ui-g-12 ui-md-4" layout="block" rendered="#{true}">
+                <p:panel id="pnEgresos" header="#{bundleGestion.Label_Egresos}">
+                    <div class="ui-g-6 ui-md-6">
+                        <h:outputText value="#{bundleGestion.Label_Arriendo}:"/>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <p:inputNumber value="#{hojaRutaBean.perfilacionDeudor.arriendo}" symbol="$" decimalPlaces="0">
+                            <p:ajax listener="#{actualizacionDatoBean.actualizarSaldos(18)}" update="pnIngresos,pnEgresos"/>
+                        </p:inputNumber>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <h:outputText value="#{bundleGestion.Label_Prestamos}:"/>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <p:inputNumber value="#{hojaRutaBean.perfilacionDeudor.prestamos}" symbol="$" decimalPlaces="0">
+                            <p:ajax listener="#{actualizacionDatoBean.actualizarSaldos(19)}" update="pnIngresos,pnEgresos"/>
+                        </p:inputNumber>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <h:outputText value="#{bundleGestion.Label_Familiares}:"/>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <p:inputNumber id="idFamiliaresValida" value="#{hojaRutaBean.perfilacionDeudor.gastosFamiliares}" symbol="$" decimalPlaces="0">
+                            <p:ajax listener="#{actualizacionDatoBean.actualizarSaldos(20)}" update="pnIngresos,pnEgresos"/>
+                        </p:inputNumber>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <h:outputText value="#{bundleGestion.Label_Otros_Egresos}:"/>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <p:inputNumber value="#{hojaRutaBean.perfilacionDeudor.otrosEgresos1}" symbol="$" decimalPlaces="0">
+                            <p:ajax listener="#{actualizacionDatoBean.actualizarSaldos(21)}" update="pnIngresos,pnEgresos"/>
+                        </p:inputNumber>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <h:outputText value="#{bundleGestion.Label_Otros_Egresos}:"/>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <p:inputNumber value="#{hojaRutaBean.perfilacionDeudor.otrosEgresos2}" symbol="$" decimalPlaces="0">
+                            <p:ajax listener="#{actualizacionDatoBean.actualizarSaldos(22)}" update="pnIngresos,pnEgresos"/>
+                        </p:inputNumber>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <h:outputText value="#{bundleGestion.Label_Total_Egresos}:"/>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <p:inputNumber value="#{hojaRutaBean.perfilacionDeudor.totalEgresos}" symbol="$" decimalPlaces="0" disabled="true"/>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <h:outputText value="#{bundleGestion.Label_Neto}:"/>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <p:inputNumber value="#{hojaRutaBean.perfilacionDeudor.neto}" symbol="$" decimalPlaces="0" disabled="true" minValue="-100000000"/>
+                    </div>
+                </p:panel>
+            </h:panelGroup>
+            <h:panelGroup class="ui-g-12 ui-md-4" layout="block" rendered="#{hojaRutaBean.panelTipificacion}">
+                <p:panel header="Tipificación Campaña">
+                    <h:panelGroup layout="block" class="ui-g-12" rendered="#{hojaRutaBean.nombrePanelUno!='vacio'}">
+                        <h:panelGroup class="ui-g-6 ui-md-6" layout="block" >
+                            <h:outputText value="#{hojaRutaBean.nombrePanelUno}"/>
+                        </h:panelGroup>
+                        <h:panelGroup class="ui-g-6 ui-md-6" layout="block">
+                            <p:selectOneMenu filterMatchMode="contains" filter="true" value="#{hojaRutaBean.panelActividad.idPanelMixto}" style="width: 100%">
+                                <f:selectItem itemValue="" itemLabel="Seleccionar..." />
+                                <f:selectItems value="#{hojaRutaBean.listaPanelActividad}" var="lista" itemLabel="#{lista.titulo}" itemValue="#{lista.idPanelMixto}"/>
+                                <p:ajax event="change" listener="#{actualizacionDatoBean.actualizarEncuestas(hojaRutaBean.panelActividad.idPanelMixto,'1')}"/>
+                            </p:selectOneMenu>
+                        </h:panelGroup>
+                    </h:panelGroup>
+                    <h:panelGroup layout="block" class="ui-g-12" rendered="#{hojaRutaBean.nombrePanelDos!='vacio'}">
+                        <h:panelGroup class="ui-g-6 ui-md-6" layout="block" >
+                            <h:outputText value="#{hojaRutaBean.nombrePanelDos}"/>
+                        </h:panelGroup>
+                        <h:panelGroup class="ui-g-6 ui-md-6" layout="block" >
+                            <p:selectOneMenu filterMatchMode="contains" filter="true" value="#{hojaRutaBean.panelMora.idPanelMixto}" style="width: 100%">
+                                <f:selectItem itemValue="" itemLabel="Seleccionar..." />
+                                <f:selectItems value="#{hojaRutaBean.listaPanelMora}" var="lista" itemLabel="#{lista.titulo}" itemValue="#{lista.idPanelMixto}"/>
+                                <p:ajax event="change" listener="#{actualizacionDatoBean.actualizarEncuestas(hojaRutaBean.panelMora.idPanelMixto,'2')}"/>
+                            </p:selectOneMenu>
+                        </h:panelGroup>
+                    </h:panelGroup>
+                    <h:panelGroup layout="block" class="ui-g-12" rendered="#{hojaRutaBean.nombrePanelTres!='vacio'}">
+                        <h:panelGroup class="ui-g-6 ui-md-6" layout="block" >
+                            <h:outputText value="#{hojaRutaBean.nombrePanelTres}"/>
+                        </h:panelGroup>
+                        <h:panelGroup class="ui-g-6 ui-md-6" layout="block">
+                            <p:selectOneMenu filterMatchMode="contains" filter="true" value="#{hojaRutaBean.panelAcuerdo.idPanelMixto}" style="width: 100%">
+                                <f:selectItem itemValue="" itemLabel="Seleccionar..." />
+                                <f:selectItems value="#{hojaRutaBean.listaPanelAcuerdo}" var="lista" itemLabel="#{lista.titulo}" itemValue="#{lista.idPanelMixto}"/>
+                                <p:ajax event="change" listener="#{actualizacionDatoBean.actualizarEncuestas(hojaRutaBean.panelAcuerdo.idPanelMixto,'3')}"/>
+                            </p:selectOneMenu>
+                        </h:panelGroup>
+                    </h:panelGroup>
+                    <h:panelGroup layout="block" class="ui-g-12" rendered="#{hojaRutaBean.nombrePanelCuatro!='vacio'}">
+                        <h:panelGroup class="ui-g-6 ui-md-6" layout="block" >
+                            <h:outputText value="#{hojaRutaBean.nombrePanelCuatro}"/>
+                        </h:panelGroup>
+                        <h:panelGroup class="ui-g-6 ui-md-6" layout="block">
+                            <p:selectOneMenu filterMatchMode="contains" filter="true" value="#{hojaRutaBean.panelObjecion.idPanelMixto}" style="width: 100%">
+                                <f:selectItem itemValue="" itemLabel="Seleccionar..." />
+                                <f:selectItems value="#{hojaRutaBean.listaPanelObjeciones}" var="lista" itemLabel="#{lista.titulo}" itemValue="#{lista.idPanelMixto}"/>
+                                <p:ajax event="change" listener="#{actualizacionDatoBean.actualizarEncuestas(hojaRutaBean.panelOtros.idPanelMixto,'4')}"/>
+                            </p:selectOneMenu>
+                        </h:panelGroup>
+                    </h:panelGroup>
+                    <h:panelGroup layout="block" class="ui-g-12" rendered="#{hojaRutaBean.nombrePanelCinco!='vacio'}">
+                        <h:panelGroup class="ui-g-6 ui-md-6" layout="block" >
+                            <h:outputText value="#{hojaRutaBean.nombrePanelCinco}"/>
+                        </h:panelGroup>
+                        <h:panelGroup class="ui-g-6 ui-md-6" layout="block">
+                            <p:selectOneMenu filterMatchMode="contains" filter="true" value="#{hojaRutaBean.panelOtros.idPanelMixto}" style="width: 100%">
+                                <f:selectItem itemValue="" itemLabel="Seleccionar..." />
+                                <f:selectItems value="#{hojaRutaBean.listaPanelOtros}" var="lista" itemLabel="#{lista.titulo}" itemValue="#{lista.idPanelMixto}"/>
+                                <p:ajax event="change" listener="#{actualizacionDatoBean.actualizarEncuestas(hojaRutaBean.panelOtros.idPanelMixto,'5')}"/>
+                            </p:selectOneMenu>
+                        </h:panelGroup>
+                    </h:panelGroup>
+                    <h:panelGroup layout="block" class="ui-g-12" rendered="#{hojaRutaBean.nombrePanelSeis!='vacio'}">
+                        <h:panelGroup class="ui-g-6 ui-md-6" layout="block" >
+                            <h:outputText value="#{hojaRutaBean.nombrePanelSeis}"/>
+                        </h:panelGroup>
+                        <h:panelGroup class="ui-g-6 ui-md-6" layout="block">
+                            <p:selectOneMenu filterMatchMode="contains" filter="true" value="#{hojaRutaBean.panelOtros1.idPanelMixto}" style="width: 100%">
+                                <f:selectItem itemValue="" itemLabel="Seleccionar..." />
+                                <f:selectItems value="#{hojaRutaBean.listaPanelOtros1}" var="lista" itemLabel="#{lista.titulo}" itemValue="#{lista.idPanelMixto}"/> 
+                                <p:ajax event="change" listener="#{actualizacionDatoBean.actualizarEncuestas(hojaRutaBean.panelOtros1.idPanelMixto,'6')}"/>
+                            </p:selectOneMenu>
+                        </h:panelGroup>
+                    </h:panelGroup>
+                </p:panel>
+            </h:panelGroup>
+
+            <h:panelGroup class="ui-g-12 ui-md-4" layout="block" rendered="#{hojaRutaBean.renderUsoVehiculos == 1 ? true : false}">
+                <p:panel header="#{bundleGestion.Label_Vehiculo}" styleClass="estiloBundles">
+                    <!-- Tipo Vehiculo -->
+                    <div class="ui-g-6 ui-md-6">
+                        <h:outputText value="#{bundleGestion.Label_Tipo_Vehiculo}" styleClass="estiloBundles" />
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <p:selectOneMenu value="#{hojaRutaBean.perfilacionDeudor.asTipoVehiculo.idTipoVehiculo}" filterMatchMode="contains" filter="true" style="width: 100%">
+                            <f:selectItem itemValue="" itemLabel="#{bundleGestion.Label_Seleccionar}..." />
+                            <f:selectItems value="#{hojaRutaBean.listaVehiculos}" var="tipovehiculo" itemLabel="#{tipovehiculo.nombre}" itemValue="#{tipovehiculo.idTipoVehiculo}" />
+                            <p:ajax listener="#{actualizacionDatoBean.actualizarPerfil(33)}"/>
+                        </p:selectOneMenu>
+                    </div>
+
+                    <!-- Placa -->
+                    <div class="ui-g-6 ui-md-6">
+                        <h:outputText value="#{bundleGestion.Label_Placa}" styleClass="estiloBundles"/>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <p:inputText id="inputPlaca" value="#{hojaRutaBean.perfilacionDeudor.placa}" styleClass="estiloBundles estiloInputGrande">
+                            <p:ajax listener="#{actualizacionDatoBean.actualizarPerfil(34)}"/>
+                        </p:inputText>
+                    </div>
+
+                    <!-- Marca -->
+                    <div class="ui-g-6 ui-md-6">
+                        <h:outputText value="#{bundleGestion.Label_Marca}:" styleClass="estiloBundles"/>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                    <p:inputText id="inputMarca" value="#{hojaRutaBean.perfilacionDeudor.marca}" style="text-align: left;">
+                            <p:ajax listener="#{actualizacionDatoBean.actualizarPerfil(35)}"/>
+                        </p:inputText>
+                    </div>
+
+                    <!-- Modelo -->
+                    <div class="ui-g-6 ui-md-6">
+                        <h:outputText value="#{bundleGestion.Label_Modelo}:" styleClass="estiloBundles"/>
+                    </div>
+                    <div class="ui-g-6 ui-md-6">
+                        <p:inputText id="inputModelo" 
+                                       value="#{hojaRutaBean.perfilacionDeudor.modelo}" 
+                                       style="text-align: left; font-size: 20px; font-family: Arial, Helvetica, sans-serif;"
+                                       >
+                            <p:ajax listener="#{actualizacionDatoBean.actualizarPerfil(36)}"/>
+                        </p:inputText>
+                    </div>
+                </p:panel>
+            </h:panelGroup>
+        </h:panelGroup>
+    </div>
+</ui:composition>

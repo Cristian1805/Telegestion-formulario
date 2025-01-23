@@ -46,5 +46,5 @@ WHERE fk_id_panel_prncipal = 7
 
 --(SUBMOTIVO DE ATRASO)
 SELECT * FROM as_panel_mixto
-WHERE fk_id_panel_informativo IN (7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+WHERE fk_id_panel_informativo IN (7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 32);
 
