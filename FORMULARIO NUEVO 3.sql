@@ -37,28 +37,27 @@ $BODY$
 	     obligacion.dias_mora_inicio,
 	     'NO'::character varying llamada_sin_datos,
 	     CASE WHEN actiPanelPrinci.descripcion2 != 'PR1' THEN 'NO' ELSE 'SI' END gestionable,
-	     CASE WHEN motivo_no_ges.titulo IS NULL THEN 'NULL' ELSE motivo_no_ges.titulo END motivo_no_gestionable, 
-	     CASE WHEN sub_motivo_no_gestionable.titulo IS NULL THEN 'NULL' ELSE sub_motivo_no_gestionable.titulo 
-		END sub_motivo_no_gestionable,
+	     COALESCE(motivo_no_ges.titulo, '') motivo_no_gestionable, 
+	     COALESCE(sub_motivo_no_gestionable.titulo, '') sub_motivo_no_gestionable,
 	     ' '::character varying no_caso,
 	    
 	     CASE WHEN actiPanelPrinci.guion2 = 'PROMESA DE PAGO' THEN 'PROMESA' 
 		ELSE  CASE WHEN actiPanelPrinci.guion2 = 'NEGATIVA DE PAGO' THEN 'NEGATIVA' 
-		      ELSE 'NULL' END 
+		      ELSE '' END 
 		END tipo_gestion, 
-	     CASE WHEN actiPanelPrinci.guion2 IS NULL THEN 'NULL' ELSE actiPanelPrinci.guion2 END tipo_promesa, 
-	     CASE WHEN tipo_nega.titulo IS NULL THEN 'NULL' ELSE tipo_nega.titulo END tipo_nega, 
-	     CASE WHEN subtipo_nega.titulo IS NULL THEN 'NULL' ELSE subtipo_nega.titulo END subtipo_nega, 
+	     COALESCE(actiPanelPrinci.guion2, '') tipo_promesa, 
+	     COALESCE(tipo_nega.titulo, '') tipo_nega, 
+	     COALESCE(subtipo_nega.titulo, '') subtipo_nega, 
 	     CASE WHEN gestion.fk_id_canal_contacto = 1 THEN 'OUTBOUND' 
 		ELSE CASE WHEN gestion.fk_id_canal_contacto = 2 
 		     THEN 'INBOUND' END  
 		END tipo_llamada, 
 	     telefono.numero_tel,
-	     CASE WHEN motivo.titulo IS NULL THEN 'NULL' ELSE motivo.titulo END motivo_atraso, 
-	     CASE WHEN submotivo.titulo IS NULL THEN 'NULL' ELSE submotivo.titulo END submotivo_atraso, 
+	     COALESCE(motivo.titulo, '') motivo_atraso, 
+	     COALESCE(submotivo.titulo, '') submotivo_atraso, 
 	     acuerdo.valor_acuerdo,
 	     to_char(acuerdo.fecha_prom_pago, 'dd/mm/yyyy') fechaPromesa,	
-             CASE WHEN actiPanelPrinci.guion5 IS NULL THEN 'NULL' ELSE actiPanelPrinci.guion5 END promocion, -- CUARTO NIVEL DEL ARBOL
+             COALESCE(actiPanelPrinci.guion5, '') promocion, -- CUARTO NIVEL DEL ARBOL
              obligacion.columna25 tipo_promocion,
              'INACTIVO'::character varying,
              obligacion.columna2 SCORE_CLIENTE,
@@ -95,7 +94,7 @@ WHERE
 		    OR 
 		    (pi.fk_id_panel_prncipal = 14) 
 		    AND ap.fk_id_gestion IS NOT NULL
-	) motivo_no_ges ON motivo_no_ges.fk_id_gestion = gestion.id_gestion
+	) motivo_no_ges ON motivo_no_ges.fk_id_gestion = gestion.id_gestion -- "MOTIVO NO GESTIONABLE"
     LEFT JOIN(
 		SELECT  
         ap.fk_id_gestion AS fk_id_gestion,
@@ -116,7 +115,7 @@ WHERE
                 OR 
                 (pi.fk_id_panel_prncipal = 14)
         )
-        AND ap.fk_id_gestion IS NOT NULL 
+        AND ap.fk_id_gestion IS NOT NULL --SUBMOTIVO NO GESTIONABLE
     ) sub_motivo_no_gestionable ON sub_motivo_no_gestionable.fk_id_gestion = gestion.id_gestion
 	LEFT JOIN (
 		SELECT  
