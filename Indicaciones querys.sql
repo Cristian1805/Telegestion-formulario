@@ -67,12 +67,31 @@ WHERE
     (fk_id_panel_informativo = 7 AND id_panel_mixto IN (83, 84, 85, 86, 87))
     OR (fk_id_panel_informativo = 8 AND id_panel_mixto IN (88, 89, 90, 91, 92, 93, 94, 95, 96))
     OR (fk_id_panel_informativo = 9 AND id_panel_mixto IN (97, 98, 99, 100, 101, 102, 103, 104, 105))
-    OR (fk_id_panel_informativo = 10 AND id_panel_mixto IN (106))
+    OR (fk_id_panel_informativo = 10 AND id_panel_mixto IN (106, 178))
     OR (fk_id_panel_informativo = 11 AND id_panel_mixto IN (107, 108))
     OR (fk_id_panel_informativo = 12 AND id_panel_mixto IN (109))
     OR (fk_id_panel_informativo = 13 AND id_panel_mixto IN (110))
     OR (fk_id_panel_informativo = 14 AND id_panel_mixto IN (111))
     OR (fk_id_panel_informativo = 15 AND id_panel_mixto IN (112))
     OR (fk_id_panel_informativo = 16 AND id_panel_mixto IN (113))
-    OR (fk_id_panel_informativo = 32 AND id_panel_mixto IN (163))
+    OR (fk_id_panel_informativo = 32 AND id_panel_mixto IN (163, 179))
 ORDER BY fk_id_panel_informativo, id_panel_mixto ASC;
+
+--===============================================================================================================
+
+--CORRECCION EN LAS GESTIONES:
+SELECT * FROM as_obligacion
+WHERE fk_id_deudor = 3651855;
+
+SELECT * FROM as_deudor --fk_id_deudor = 3651855
+WHERE num_doc_id = '41470095';
+
+SELECT * FROM as_gestiones
+WHERE fk_id_deudor = 3651855;
+
+UPDATE as_gestiones
+SET observacion = 'TITULAR,NEGOCIACION,NEGOCIANDO LA CUENTA, TODAV�A NO SE CONCRETA UN CONVENIO,ANTICIPADA NO APLICA, NO APLICA, MOTIVO DE ATRASO
+, NO ESPECIFICO CLIENTE, SUBMOTIVO DE ATRASO, SÍ CAMBIARÍA A UN PAQUETE MÁS ECONÓMICO'
+WHERE id_gestion = 1397763;
+
+--==================================================================================================================

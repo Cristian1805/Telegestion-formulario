@@ -1,36 +1,42 @@
--- Function: public.i_agree_informe_reporte_formulario_izzi(integer, text, text)
+-- FUNCTION: public.i_agree_informe_reporte_formulario_izzi(integer, text, text)
 
--- DROP FUNCTION public.i_agree_informe_reporte_formulario_izzi(integer, text, text);
+-- DROP FUNCTION IF EXISTS public.i_agree_informe_reporte_formulario_izzi(integer, text, text);
 
 CREATE OR REPLACE FUNCTION public.i_agree_informe_reporte_formulario_izzi(
-    IN idcampana integer,
-    IN fechadesdelocal text,
-    IN fechahastalocal text,
-    OUT "FECHA_CREACION" character varying,
-    OUT "CLIENTE" character varying,
-    OUT "MORA" integer,
-    OUT "LLAMADA_SIN_DATOS" character varying,
-    OUT "GESTIONABLE" text,
-    OUT "MOTIVO_NO_GESTIONABLE" text,
-    OUT "SUB_MOTIVO_NO_GESTIONABLE" text,
-    OUT "NO_CASO" text,
-    OUT "TIPO_GESTION" text,
-    OUT "TIPO_PROMESA" text,
-    OUT "TIPO_NEGATIVA" text,
-    OUT "SUBTIPO_NEGATIVA" text,
-    OUT "TIPO_LLAMADA" text,
-    OUT "NUMERO_TELEFONICO" character varying,
-    OUT "MOTIVO_ATRASO" text,
-    OUT "SUBMOTIVO_ATRASO" text,
-    OUT "CANTIDAD_A_PAGAR" numeric,
-    OUT "FECHA_PAGO_PROMETIDA" text,
-    OUT "PROMOCION" character varying,
-    OUT "TIPO_PROMOCION" character varying,
-    OUT "TIPO_CAMPAÑA" character varying,
-    OUT "SCORE_CLIENTE" character varying,
-    OUT "ANTIGUEDAD" character varying)
-  RETURNS SETOF record AS
-$BODY$	
+	idcampana integer,
+	fechadesdelocal text,
+	fechahastalocal text,
+	OUT "FECHA_CREACION" character varying,
+	OUT "CLIENTE" character varying,
+	OUT "MORA" integer,
+	OUT "LLAMADA_SIN_DATOS" character varying,
+	OUT "GESTIONABLE" text,
+	OUT "MOTIVO_NO_GESTIONABLE" text,
+	OUT "SUB_MOTIVO_NO_GESTIONABLE" text,
+	OUT "NO_CASO" text,
+	OUT "TIPO_GESTION" text,
+	OUT "TIPO_PROMESA" text,
+	OUT "TIPO_NEGATIVA" text,
+	OUT "SUBTIPO_NEGATIVA" text,
+	OUT "TIPO_LLAMADA" text,
+	OUT "NUMERO_TELEFONICO" character varying,
+	OUT "MOTIVO_ATRASO" text,
+	OUT "SUBMOTIVO_ATRASO" text,
+	OUT "CANTIDAD_A_PAGAR" numeric,
+	OUT "FECHA_PAGO_PROMETIDA" text,
+	OUT "PROMOCION" character varying,
+	OUT "TIPO_PROMOCION" character varying,
+	OUT "TIPO_CAMPAÑA" character varying,
+	OUT "SCORE_CLIENTE" character varying,
+	OUT "ANTIGUEDAD" character varying)
+    RETURNS SETOF record 
+    LANGUAGE 'sql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+    ROWS 1000
+
+AS $BODY$
+	
 	select distinct
 	     to_char(gestion.fecha_creacion, 'dd/mm/yyyy hh:mm:ss') fecha_gestion,
 	     obligacion.numero_producto,
@@ -175,23 +181,22 @@ WHERE
         (pm.fk_id_panel_informativo = 7 AND pm.id_panel_mixto IN (83, 84, 85, 86, 87))
         OR (pm.fk_id_panel_informativo = 8 AND pm.id_panel_mixto IN (88, 89, 90, 91, 92, 93, 94, 95, 96))
         OR (pm.fk_id_panel_informativo = 9 AND pm.id_panel_mixto IN (97, 98, 99, 100, 101, 102, 103, 104, 105))
-        OR (pm.fk_id_panel_informativo = 10 AND pm.id_panel_mixto IN (106))
+        OR (pm.fk_id_panel_informativo = 10 AND pm.id_panel_mixto IN (106, 178))
         OR (pm.fk_id_panel_informativo = 11 AND pm.id_panel_mixto IN (107, 108))
         OR (pm.fk_id_panel_informativo = 12 AND pm.id_panel_mixto IN (109))
         OR (pm.fk_id_panel_informativo = 13 AND pm.id_panel_mixto IN (110))
         OR (pm.fk_id_panel_informativo = 14 AND pm.id_panel_mixto IN (111))
         OR (pm.fk_id_panel_informativo = 15 AND pm.id_panel_mixto IN (112))
         OR (pm.fk_id_panel_informativo = 16 AND pm.id_panel_mixto IN (113))
-        OR (pm.fk_id_panel_informativo = 32 AND pm.id_panel_mixto IN (163))
+        OR (pm.fk_id_panel_informativo = 32 AND pm.id_panel_mixto IN (163, 179))
 ) submotivo ON submotivo.fk_id_gestion = gestion.id_gestion -- "SUBMOTIVO ATRASO"
 	WHERE 
         gestion.fk_id_campana = idcampana
 	AND ((CAST (gestion.FECHA_CREACION AS date) ) BETWEEN fechadesdelocal::date and fechahastalocal::date)
 	ORDER BY 1;
 	
-  $BODY$
-  LANGUAGE sql VOLATILE
-  COST 100
-  ROWS 1000;
+  
+$BODY$;
+
 ALTER FUNCTION public.i_agree_informe_reporte_formulario_izzi(integer, text, text)
-  OWNER TO iagreedbuser;
+    OWNER TO iagreedbuser;
