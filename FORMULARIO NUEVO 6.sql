@@ -6,7 +6,7 @@ CREATE OR REPLACE FUNCTION public.i_agree_informe_reporte_formulario_izzi(
 	idcampana integer,
 	fechadesdelocal text,
 	fechahastalocal text,
-	OUT "FECHA_CREACION" TIMESTAMP WITHOUT TIME ZONE,
+	OUT "FECHA_CREACION" character varying,
 	OUT "CLIENTE" character varying,
 	OUT "MORA" integer,
 	OUT "LLAMADA_SIN_DATOS" character varying,
@@ -38,7 +38,7 @@ CREATE OR REPLACE FUNCTION public.i_agree_informe_reporte_formulario_izzi(
 AS $BODY$
 	
 	select distinct
-	     gestion.fecha_creacion,
+	     to_char(gestion.fecha_creacion, 'dd/mm/yyyy hh:MI:ss') fecha_gestion,
 	     obligacion.numero_producto,
 	     obligacion.dias_mora_inicio,
 	     'NO'::character varying llamada_sin_datos,
@@ -72,7 +72,7 @@ AS $BODY$
 	FROM 	   as_gestiones gestion  
 	INNER JOIN as_deudor deudor ON deudor.id_deudor = gestion.fk_id_deudor 
 	INNER JOIN as_usuarios usuario ON usuario.id_usuario = gestion.fk_id_usuario_crea 
-	INNER JOIN as_obligacion obligacion ON obligacion.fk_id_deudor = gestion.fk_id_deudor
+	INNER JOIN as_obligacion obligacion ON obligacion.fk_id_deudor = gestion.fk_id_deudor AND obligacion.fk_id_campana = gestion.fk_id_campana
 	LEFT JOIN  as_actividades_panel_principal actiPanelPrinci ON actiPanelPrinci.fk_id_gestion = gestion.id_gestion and fk_id_agree_guion is not null 
 	LEFT JOIN  as_telefono_deudores telefono ON gestion.fk_id_telefono = telefono.id_telefono
 	LEFT JOIN  as_formulario_pago pago ON pago.fk_id_gestion = gestion.id_gestion 
@@ -96,9 +96,8 @@ JOIN
 ON 
     pm.fk_id_panel_informativo = pi.id_panel_informativo
 WHERE 
-    (pi.fk_id_panel_prncipal = 7 AND pi.id_panel_informativo IN (25, 29, 30)) 
-		    OR 
-		    (pi.fk_id_panel_prncipal = 14) 
+    (pi.id_panel_informativo IN (25, 29, 30, 36, 37, 38))
+		    
 		    AND ap.fk_id_gestion IS NOT NULL
 	) motivo_no_ges ON motivo_no_ges.fk_id_gestion = gestion.id_gestion -- "MOTIVO NO GESTIONABLE"
     LEFT JOIN (
@@ -153,7 +152,8 @@ WHERE
 		SELECT  
 		    ap.fk_id_gestion AS fk_id_gestion,
 		    ap.fk_id_panel_mixto AS fk_id_panel_mixto,
-		    pi.titulo AS titulo
+		    pi.titulo AS titulo,
+			pi.id_panel_informativo AS idi
 		FROM  
 		    as_actividades_panel_principal ap
 		JOIN 
@@ -172,27 +172,20 @@ WHERE
     SELECT 
         ap.fk_id_gestion AS fk_id_gestion,
         ap.fk_id_panel_mixto AS fk_id_panel_mixto,
-        pm.titulo AS titulo
+        pm.titulo AS titulo,
+		pm.fk_id_panel_informativo AS fidi
     FROM 
         as_actividades_panel_principal ap
     JOIN 
         as_panel_mixto pm ON ap.fk_id_panel_mixto = pm.id_panel_mixto
     WHERE 
-        (pm.fk_id_panel_informativo = 7 AND pm.id_panel_mixto IN (83, 84, 85, 86, 87))
-        OR (pm.fk_id_panel_informativo = 8 AND pm.id_panel_mixto IN (88, 89, 90, 91, 92, 93, 94, 95, 96))
-        OR (pm.fk_id_panel_informativo = 9 AND pm.id_panel_mixto IN (97, 98, 99, 100, 101, 102, 103, 104, 105))
-        OR (pm.fk_id_panel_informativo = 10 AND pm.id_panel_mixto IN (106, 178))
-        OR (pm.fk_id_panel_informativo = 11 AND pm.id_panel_mixto IN (107, 108))
-        OR (pm.fk_id_panel_informativo = 12 AND pm.id_panel_mixto IN (109))
-        OR (pm.fk_id_panel_informativo = 13 AND pm.id_panel_mixto IN (110))
-        OR (pm.fk_id_panel_informativo = 14 AND pm.id_panel_mixto IN (111))
-        OR (pm.fk_id_panel_informativo = 15 AND pm.id_panel_mixto IN (112))
-        OR (pm.fk_id_panel_informativo = 16 AND pm.id_panel_mixto IN (113))
-        OR (pm.fk_id_panel_informativo = 32 AND pm.id_panel_mixto IN (163, 179))
-) submotivo ON submotivo.fk_id_gestion = gestion.id_gestion -- "SUBMOTIVO ATRASO"
+        (pm.id_panel_mixto IN (83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96,
+		97, 98, 99, 100, 101, 102, 103, 104, 105,
+		106, 178, 107, 108, 109, 110, 111, 112, 113, 163, 179))
+) submotivo ON submotivo.fk_id_gestion = gestion.id_gestion AND submotivo.fidi = motivo.idi -- "SUBMOTIVO ATRASO"
 	WHERE 
         gestion.fk_id_campana = idcampana
-		AND gestion.fecha_creacion BETWEEN fechadesdelocal::DATE AND fechahastalocal::DATE
+	AND ((CAST (gestion.FECHA_CREACION AS date) ) BETWEEN fechadesdelocal::date and fechahastalocal::date)
 	ORDER BY 1;
 	
   
